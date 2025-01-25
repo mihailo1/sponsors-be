@@ -1,0 +1,25 @@
+{
+  "scripts": {
+    "start": {
+      "cmd": "deno run --allow-net --allow-read --allow-write --allow-env server.ts",
+      "desc": "Run the server with live reloading"
+    },
+    "lint": {
+      "cmd": "deno lint",
+      "desc": "Lint the code"
+    },
+    "fmt": {
+      "cmd": "deno fmt",
+      "desc": "Format the code"
+    },
+    "build-react": {
+      "cmd": "npm run build",
+      "desc": "Build the React project",
+      "watch": ["react-app/**/*"],
+      "debounce": 500
+    }
+  },
+  "watch": ["server.ts", "routes/", "react-app/build/", "deps.ts"],
+  "nodeModulesDir": "auto",
+  "importMap": "./import_map.json"
+}
