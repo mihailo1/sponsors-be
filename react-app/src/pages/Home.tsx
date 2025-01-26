@@ -129,7 +129,7 @@ function Home() {
               />
             </svg>
             <p className="mt-4 text-gray-500 dark:text-dark-text">
-              Nothing found, add something
+              Nothing found, press enter to add
             </p>
           </div>
         )}

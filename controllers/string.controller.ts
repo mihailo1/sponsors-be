@@ -20,7 +20,7 @@ const getAllStrings = async (context: Context) => {
 
 const createString = async (context: Context) => {
     try {
-        const body = await context.request.body.json();
+        const body = await context.request.body().value;
         if (body && typeof body === "object" && body.value) {   
             stringsArray.push(body.value);
             stringsArray = stringsArray.filter((str) => str !== null);
@@ -36,7 +36,7 @@ const createString = async (context: Context) => {
     } catch (error) {
         console.error("Failed to parse JSON body:", error);
         context.response.status = 400;
-        context.response.body = { error: "Invalid JSON" };
+        context.response.body = { error: "Invalid JSON", extra: error };
     }
 };
 
