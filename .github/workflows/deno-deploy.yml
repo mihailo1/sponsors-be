@@ -39,4 +39,4 @@ jobs:
         env:
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
           REACT_APP_API_BASE_URL: ${{ secrets.REACT_APP_API_BASE_URL }}
-        run: deno deploy --project=./ --allow-read --allow-write --allow-net
+        run: deno deploy --allow-read --allow-write --allow-net --project=./
