@@ -47,7 +47,7 @@ router.get("/admin(.*)", async (context) => {
     try {
         console.log("Serving admin page");
 
-        Deno.env.set("REACT_APP_API_BASE_URL", `http://localhost:${Deno.env.get("PORT")}`);
+        Deno.env.set("REACT_APP_API_BASE_URL", `https://michael-sponsors-be-84.deno.dev`);
         await send(context, "index.html", {
             root: `${Deno.cwd()}/react-app/build`,
         });
@@ -61,6 +61,7 @@ router.get("/admin(.*)", async (context) => {
 // TODO: why /admin(.*) only works with .* method ?
 router.all("(.*)", async (context) => {
     try {
+        Deno.env.set("REACT_APP_API_BASE_URL", `https://michael-sponsors-be-84.deno.dev`);
         await send(context, context.request.url.pathname, {
             root: `${Deno.cwd()}/react-app/build`,
         });
