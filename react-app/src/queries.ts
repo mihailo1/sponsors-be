@@ -1,9 +1,11 @@
+const API_KEY = process.env.REACT_APP_API_BASE_URL ?? window.location.origin;
+
 export const fetchStats = () => {
-  return fetch(`${process.env.REACT_APP_API_BASE_URL}/api/stats`).then((response) => response.json());
+  return fetch(`${API_KEY}/api/stats`).then((response) => response.json());
 };
 
 export const uploadFile = (fileContent: string | ArrayBuffer | null) => {
-  return fetch(`${process.env.REACT_APP_API_BASE_URL}/api/upload`, {
+  return fetch(`${API_KEY}/api/upload`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -13,17 +15,17 @@ export const uploadFile = (fileContent: string | ArrayBuffer | null) => {
 };
 
 export const fetchStrings = (query: string) => {
-  return fetch(`${process.env.REACT_APP_API_BASE_URL}/api/strings/search?query=${query}`).then((response) => response.json());
+  return fetch(`${API_KEY}/api/strings/search?query=${query}`).then((response) => response.json());
 };
 
 export const deleteString = (id: number) => {
-  return fetch(`${process.env.REACT_APP_API_BASE_URL}/api/strings/${id}`, {
+  return fetch(`${API_KEY}/api/strings/${id}`, {
     method: "DELETE",
   }).then((response) => response.json());
 };
 
 export const addString = (value: string) => {
-  return fetch(`${process.env.REACT_APP_API_BASE_URL}/api/strings`, {
+  return fetch(`${API_KEY}/api/strings`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -33,5 +35,5 @@ export const addString = (value: string) => {
 };
 
 export const fetchApiSchema = () => {
-  return fetch(`${process.env.REACT_APP_API_BASE_URL}/api/schema`).then((response) => response.json());
+  return fetch(`${API_KEY}/api/schema`).then((response) => response.json());
 };
