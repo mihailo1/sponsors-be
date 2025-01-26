@@ -1,6 +1,7 @@
 # Simple Deno App
 
-This is a simple Deno application that starts an HTTP server and serves a React app with a menu and three pages.
+This is a simple Deno application that starts an HTTP server and serves a React
+app with a menu and three pages.
 
 ## Requirements
 
@@ -51,25 +52,27 @@ source ~/.zshrc  # or source ~/.bashrc
 ## Setting Up the React Project
 
 1. Navigate to the `react-app` directory:
-    ```sh
-    cd /Users/misha/Documents/reps.nosync/sponsors-app/react-app
-    ```
+   ```sh
+   cd /Users/misha/Documents/reps.nosync/sponsors-app/react-app
+   ```
 
 2. Install the dependencies:
-    ```sh
-    yarn
-    ```
+   ```sh
+   yarn
+   ```
 
 3. Build the React app:
-    ```sh
-    yarn build
-    ```
+   ```sh
+   yarn build
+   ```
 
 ## Running the Server
 
-Ensure the React app is built before starting the server. If not, run `yarn build` in the `react-app` directory.
+Ensure the React app is built before starting the server. If not, run
+`yarn build` in the `react-app` directory.
 
-To start the server with live reloading, run the following command in your terminal:
+To start the server with live reloading, run the following command in your
+terminal:
 
 ```sh
 denon start
@@ -79,6 +82,9 @@ The server will be accessible at `http://localhost:8000/`.
 
 ## Troubleshooting
 
-If you encounter the error `TypeError: server is not async iterable`, ensure that you are using the correct method to handle requests. Update your `server.ts` file to use `listenAndServe` instead of `serve`.
+If you encounter the error `TypeError: server is not async iterable`, ensure
+that you are using the correct method to handle requests. Update your
+`server.ts` file to use `listenAndServe` instead of `serve`.
 
-If you encounter the error `Module not found`, ensure that you have the correct import paths in your `deps.ts` file.
+If you encounter the error `Module not found`, ensure that you have the correct
+import paths in your `deps.ts` file.

@@ -17,7 +17,9 @@ export const uploadFile = (fileContent: string | ArrayBuffer | null) => {
 };
 
 export const fetchStrings = (query: string) => {
-  return fetch(`${API_KEY}/api/strings/search?query=${query}`).then((response) => response.json());
+  return fetch(`${API_KEY}/api/strings/search?query=${query}`).then((
+    response,
+  ) => response.json());
 };
 
 export const deleteString = (id: number) => {
