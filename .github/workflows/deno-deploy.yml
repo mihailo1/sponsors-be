@@ -33,7 +33,7 @@ jobs:
         run: deno cache --lock=deno.lock deps.ts
 
       - name: Run tests
-        run: deno test --unstable --allow-all
+        run: deno test --allow-all
 
       - name: Deploy to Deno Deploy
         env:
