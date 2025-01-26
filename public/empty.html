@@ -4,16 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Empty Page</title>
+    <title>404</title>
+    <style>
+        body {
+            background-image: url('https://img.freepik.com/free-vector/space-monochrome-elements-set-with-astronaut-shuttles-rockets-cosmic-objects-observatory-radar-isolated_1284-33836.jpg');
+            background-size: 600px 600px;
+            background-position: 0 0;
+            background-repeat: repeat;
+            backdrop-filter: blur(7px);
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            place-content: center;
+            margin: 0;
+            font-family: monospace;
+            animation: moveBackground 10s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            from {
+                background-position: 0 0;
+            }
+            to {
+                background-position: 600px 600px;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <h1>This is an empty page</h1>
-    <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000">
-        <rect width="100%" height="100%" fill="red" />
-        <circle cx="500" cy="500" r="250" fill="blue" />
-        <text x="500" y="500" font-size="100" fill="white" text-anchor="middle">empty</text>
-    </svg>
 </body>
 
 </html>

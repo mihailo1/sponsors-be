@@ -1,5 +1,7 @@
 const API_KEY = process.env.REACT_APP_API_BASE_URL ?? window.location.origin;
 
+console.log("API_KEY", API_KEY);
+
 export const fetchStats = () => {
   return fetch(`${API_KEY}/api/stats`).then((response) => response.json());
 };
