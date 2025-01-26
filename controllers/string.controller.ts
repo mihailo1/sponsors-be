@@ -10,10 +10,11 @@ let stringsArray: string[] = JSON.parse(Deno.readTextFileSync(listFilePath)).str
 let cachedStringsArray = stringsArray.map((str, index) => ({ id: index, value: str }));
 
 const updateCache = () => {
+    stringsArray = JSON.parse(Deno.readTextFileSync(listFilePath)).strings;
     cachedStringsArray = stringsArray.map((str, index) => ({ id: index, value: str }));
 };
 
-const getAllStrings = async (context: Context) => {
+const getAllStrings = (context: Context) => {
     context.response.status = 200;
     context.response.body = JSON.stringify(stringsArray);
 };
@@ -21,7 +22,7 @@ const getAllStrings = async (context: Context) => {
 const createString = async (context: Context) => {
     try {
         const body = await context.request.body().value;
-        if (body && typeof body === "object" && body.value) {   
+        if (body && typeof body === "object" && body.value) {
             stringsArray.push(body.value);
             stringsArray = stringsArray.filter((str) => str !== null);
             stringsArray.sort();
@@ -41,10 +42,10 @@ const createString = async (context: Context) => {
 };
 
 const updateString = async (context: Context) => {
-    const id = context.params.id;
+    const id = context.request.url.searchParams.get('id');
     try {
-        const body = await context.request.body.json();
-        if (id !== null) {
+        const body = await context.request.body().value;
+        if (id != null) {
             const index = parseInt(id);
             if (index >= 0 && index < stringsArray.length && body.value) {
                 stringsArray[index] = body.value;
@@ -68,9 +69,9 @@ const updateString = async (context: Context) => {
     }
 };
 
-const deleteString = async (context: Context) => {
-    const id = context.params.id;
-    if (id !== null) {
+const deleteString = (context: Context) => {
+    const id = context.request.url.pathname.split("/").pop();
+    if (id != null) {
         const index = parseInt(id);
         if (index >= 0 && index < stringsArray.length) {
             stringsArray.splice(index, 1);
@@ -88,7 +89,7 @@ const deleteString = async (context: Context) => {
     }
 };
 
-const searchStrings = async (context: Context) => {
+const searchStrings = (context: Context) => {
     const query = context.request.url.searchParams.get("query") || "";
     const filteredStrings = cachedStringsArray
         .filter((str) => str.value.toLowerCase().includes(query.toLowerCase()))

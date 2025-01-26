@@ -3,6 +3,7 @@ import Table from "../components/Table";
 import Button from "../components/Button";
 import { debounce } from "lodash";
 import { fetchStrings, deleteString, addString } from "../queries";
+import useToast from "../utils/toast";
 
 interface StringItem {
   id: number;
@@ -10,6 +11,7 @@ interface StringItem {
 }
 
 function Home() {
+  const toast = useToast();
   const [strings, setStrings] = useState<StringItem[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -50,17 +52,25 @@ function Home() {
     deleteString(id)
       .then((data) => {
         setStrings(data);
+        setSearchTerm("");
+        toast.success("String deleted successfully!");
       })
-      .catch((error) => console.error("Error deleting string:", error));
+      .catch((error) => {
+        console.error("Error deleting string:", error);
+        toast.error("Error deleting string!");
+      });
   };
 
-  const handleAdd = () => {
-    addString(searchTerm)
-      .then((data) => {
-        setStrings([...strings, { id: strings.length, value: searchTerm }]);
-        setSearchTerm("");
-      })
-      .catch((error) => console.error("Error adding string:", error));
+  const handleAdd = async () => {
+    try {
+      const data = await addString(searchTerm);
+      setStrings([...strings, { id: strings.length, value: searchTerm }]);
+      setSearchTerm("");
+      toast.success("String added successfully!");
+    } catch (error) {
+      console.error("Error adding string:", error);
+      toast.error("Error adding string!");
+    }
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
