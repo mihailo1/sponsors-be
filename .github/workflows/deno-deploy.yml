@@ -30,7 +30,7 @@ jobs:
             ${{ runner.os }}-deno-
 
       - name: Install dependencies
-        run: deno cache deps.ts
+        run: deno cache --lock=deno.lock deps.ts
 
       - name: Run tests
         run: deno test --unstable --allow-all

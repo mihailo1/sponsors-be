@@ -10,6 +10,6 @@
         "react-app/build/",
         "deps.ts"
     ],
-    "nodeModulesDir": true,
+    "nodeModulesDir": "auto",
     "importMap": "./import_map.json"
 }
