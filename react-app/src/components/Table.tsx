@@ -21,15 +21,15 @@ function Table({ columns, data, tdClassName }: TableProps) {
 
   return (
     <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
-      <div className="relative">
+      <div className="relative max-h-[calc(100vh-200px)] overflow-y-auto">
         <table className="min-w-full mt-4 bg-white dark:bg-gray-800">
-          <thead className="sticky top-0 bg-white dark:bg-gray-800 shadow-md">
+          <thead className="sticky top-0 bg-white dark:bg-gray-800 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-4 py-2 text-gray-800 dark:text-dark-text"
+                    className="px-4 py-2 text-gray-800 dark:text-dark-text bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
                   >
                     {flexRender(
                       header.column.columnDef.header,

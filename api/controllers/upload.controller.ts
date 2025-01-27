@@ -1,4 +1,4 @@
-import { Context } from "../deps.ts";
+import { Context } from "../../deps.ts";
 
 const kv = await Deno.openKv();
 

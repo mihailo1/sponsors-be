@@ -38,25 +38,45 @@ function API() {
   ];
 
   return (
-    <div style={{ maxHeight: "calc(100vh - 278px)" }}>
+    <div className="w-full">
       <h2 className="text-3xl font-semibold text-gray-800 dark:text-dark-text">
         API Documentation
       </h2>
 
-      <h4 className="text-1xl font-semibold text-gray-800 dark:text-dark-text mt-4">
-        Endpoint Routes
-      </h4>
-      <Table columns={columns} data={endpointRoutes} tdClassName="text-left" />
+      <div className="mt-4">
+        <h4 className="text-1xl font-semibold text-gray-800 dark:text-dark-text">
+          Endpoint Routes
+        </h4>
+        <div className="relative overflow-y-auto max-h-[calc(calc(100vh-164px)/3)]">
+          <Table
+            columns={columns}
+            data={endpointRoutes}
+            tdClassName="text-left"
+          />
+        </div>
+      </div>
 
-      <h4 className="text-1xl font-semibold text-gray-800 dark:text-dark-text mt-4">
-        Static Routes
-      </h4>
-      <Table columns={columns} data={staticRoutes} tdClassName="text-left" />
+      <div className="mt-4">
+        <h4 className="text-1xl font-semibold text-gray-800 dark:text-dark-text">
+          Static Routes
+        </h4>
+        <div className="relative overflow-y-auto max-h-[calc(calc(100vh-164px)/3)]">
+          <Table
+            columns={columns}
+            data={staticRoutes}
+            tdClassName="text-left"
+          />
+        </div>
+      </div>
 
-      <h4 className="text-1xl font-semibold text-gray-800 dark:text-dark-text mt-4">
-        Admin Routes
-      </h4>
-      <Table columns={columns} data={adminRoutes} tdClassName="text-left" />
+      <div className="mt-4">
+        <h4 className="text-1xl font-semibold text-gray-800 dark:text-dark-text">
+          Admin Routes
+        </h4>
+        <div className="relative overflow-y-auto max-h-[calc(calc(100vh-164px)/3)]">
+          <Table columns={columns} data={adminRoutes} tdClassName="text-left" />
+        </div>
+      </div>
     </div>
   );
 }

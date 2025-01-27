@@ -1,26 +1,101 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Button from "../components/Button";
-import { fetchStats, uploadFile } from "../queries";
+import { uploadFile } from "../queries";
 import useToast from "../utils/toast";
+import { ServerStats, StringItem, WordCloudData } from "../../../types";
+import * as d3 from "d3";
+import cloud from "d3-cloud";
 
 function Settings() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [stats, setStats] = useState<
-    {
-      uptime: number;
-      stringsCount: number;
-      memoryUsage: number;
-      cpuUsage: number;
-    } | null
-  >(null);
+  const [stats, setStats] = useState<ServerStats | null>(null);
+  const [strings, setStrings] = useState<StringItem[]>([]);
   const toast = useToast();
+  const wordCloudRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetchStats()
-      .then((data) => setStats(data))
-      .catch((error) => console.error("Error fetching stats:", error));
+    const ws = new WebSocket("ws://localhost:8000/ws");
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("Received WebSocket message:", data);
+      setStats(data);
+      setStrings(data.strings);
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    return () => {
+      ws.close();
+    };
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const wordCloudData: WordCloudData[] = strings.map((str) => ({
+        text: str.value,
+        size: 10 + Math.random() * 90,
+      }));
+
+      const containerWidth = wordCloudRef.current?.offsetWidth || 800;
+      const layout = cloud()
+        .size([containerWidth, 400])
+        .words(wordCloudData)
+        .padding(5)
+        .rotate(() => (Math.random() > 0.5 ? 90 : 0))
+        .font("Impact")
+        .fontSize((d) => d.size || 10) // Ensure size is always a number
+        .on("end", draw);
+
+      layout.start();
+
+      function draw(words: any) {
+        console.log("Drawing word cloud with words:", words);
+        d3.select("#word-cloud").selectAll("*").remove();
+
+        const svg = d3.select("#word-cloud")
+          .append("svg")
+          .attr("width", layout.size()[0])
+          .attr("height", layout.size()[1])
+          .append("g")
+          .attr(
+            "transform",
+            "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 +
+              ")",
+          );
+
+        const color = d3.scaleOrdinal(d3.schemePastel1);
+
+        const text = svg.selectAll("text")
+          .data(words)
+          .enter()
+          .append("text")
+          .style("font-size", (d: any) => d.size + "px")
+          .style("font-family", "Impact")
+          .style("fill", (d: any, i: any) => color(i.toString()))
+          .attr("text-anchor", "middle")
+          .attr(
+            "transform",
+            (d: any) => "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")",
+          )
+          .style("opacity", 0)
+          .text((d: any) => d.text);
+
+        text.transition()
+          .duration(750)
+          .attr(
+            "transform",
+            (d: any) => "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")",
+          )
+          .style("opacity", 1);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [strings]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -51,7 +126,7 @@ function Settings() {
   };
 
   return (
-    <div>
+    <div className="geologica-regular">
       <h2 className="text-3xl font-semibold text-gray-800 dark:text-dark-text">
         Settings
       </h2>
@@ -104,6 +179,7 @@ function Settings() {
           <p>CPU Usage: {stats.cpuUsage} %</p>
         </div>
       )}
+      <div id="word-cloud" ref={wordCloudRef} className="mt-8"></div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
-import { Context } from "../deps.ts";
-import { StringItem } from "../types.ts";
+import { Context } from "../../deps.ts";
+import { StringItem } from "../../types.ts";
 
 const kv = await Deno.openKv();
 

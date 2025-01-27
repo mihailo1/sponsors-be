@@ -1,4 +1,4 @@
-import { Router, send } from "../deps.ts";
+import { Router, send } from "../../deps.ts";
 import stringController from "../controllers/string.controller.ts";
 import uploadController from "../controllers/upload.controller.ts";
 import statsController from "../controllers/stats.controller.ts";
