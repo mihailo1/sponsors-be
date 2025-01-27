@@ -66,7 +66,10 @@ function App() {
 const container = document.getElementById("root");
 const root = createRoot(container!);
 root.render(
-  <Router>
+  <Router
+    basename="/admin"
+    future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+  >
     <ThemeProvider>
       <ToastContainer />
       <App />
