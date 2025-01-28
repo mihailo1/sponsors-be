@@ -11,5 +11,9 @@
     "deps.ts"
   ],
   "nodeModulesDir": "auto",
-  "importMap": "./import_map.json"
+  "importMap": "./import_map.json",
+  "imports": {
+    "@neon/serverless": "jsr:@neon/serverless@^0.10.1",
+    "https://deno.land/x/dotenv/mod.ts": "https://deno.land/x/dotenv/mod.ts"
+  }
 }

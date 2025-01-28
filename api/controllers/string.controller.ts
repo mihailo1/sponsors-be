@@ -1,17 +1,15 @@
 import { Context } from "../../deps.ts";
 import { StringItem } from "../../types.ts";
+import { neon } from '@neon/serverless';
+import { DATABASE_URL } from "../config/env.ts";
 
-const kv = await Deno.openKv();
+const sql = neon(DATABASE_URL);
 
 const getAllStrings = async (context: Context) => {
-  const entries = kv.list({ prefix: ["strings"] });
-  const stringsArray: StringItem[] = [];
-  for await (const entry of entries) {
-    stringsArray.push({
-      id: entry.key[1] as string,
-      value: entry.value as string,
-    });
-  }
+  const stringsArray: StringItem[] = (await sql`SELECT * FROM strings`).map((row: Record<string, any>) => ({
+    id: row.id,
+    value: row.value,
+  }));
   context.response.status = 200;
   context.response.body = JSON.stringify(stringsArray);
 };
@@ -20,8 +18,7 @@ const createString = async (context: Context) => {
   try {
     const body = await context.request.body().value;
     if (body && typeof body === "object" && body.value) {
-      const key = ["strings", body.value];
-      await kv.set(key, body.value);
+      await sql`INSERT INTO strings (value) VALUES (${body.value})`;
       context.response.status = 201;
       context.response.body = { message: "String created successfully" };
     } else {
@@ -40,8 +37,7 @@ const updateString = async (context: Context) => {
   try {
     const body = await context.request.body().value;
     if (id != null && body.value) {
-      const key = ["strings", id];
-      await kv.set(key, body.value);
+      await sql`UPDATE strings SET value = ${body.value} WHERE id = ${id}`;
       context.response.status = 200;
       context.response.body = { message: "String updated successfully" };
     } else {
@@ -58,19 +54,12 @@ const updateString = async (context: Context) => {
 const deleteString = async (context: Context) => {
   const id = context.request.url.pathname.split("/").pop();
   if (id != null) {
-    const key = ["strings", id];
-    await kv.delete(key);
+    await sql`DELETE FROM strings WHERE id = ${id}`;
 
-    // Fetch the updated list of strings
-    const entries = kv.list({ prefix: ["strings"] });
-    const stringsArray: StringItem[] = [];
-    for await (const entry of entries) {
-      stringsArray.push({
-        id: entry.key[1] as string,
-        value: entry.value as string,
-      });
-    }
-
+    const stringsArray: StringItem[] = (await sql`SELECT * FROM strings`).map((row: Record<string, any>) => ({
+      id: row.id,
+      value: row.value,
+    }));
     context.response.status = 200;
     context.response.body = stringsArray;
   } else {
@@ -81,17 +70,10 @@ const deleteString = async (context: Context) => {
 
 const searchStrings = async (context: Context) => {
   const query = context.request.url.searchParams.get("query") || "";
-  const entries = kv.list({ prefix: ["strings"] });
-  const filteredStrings: StringItem[] = [];
-  for await (const entry of entries) {
-    const value = entry.value as string;
-    if (value.toLowerCase().includes(query.toLowerCase())) {
-      filteredStrings.push({ id: entry.key[1] as string, value });
-    }
-    if (filteredStrings.length >= 100) {
-      break;
-    }
-  }
+  const filteredStrings: StringItem[] = (await sql`SELECT * FROM strings WHERE value ILIKE ${'%' + query + '%'}`).map((row: Record<string, any>) => ({
+    id: row.id,
+    value: row.value,
+  }));
   context.response.status = 200;
   context.response.body = JSON.stringify(filteredStrings);
 };

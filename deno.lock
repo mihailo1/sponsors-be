@@ -1,6 +1,7 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@neon/serverless@~0.10.1": "0.10.4",
     "jsr:@oak/commons@1": "1.0.0",
     "jsr:@std/assert@1": "1.0.10",
     "jsr:@std/bytes@1": "1.0.4",
@@ -13,6 +14,9 @@
     "npm:@types/node@*": "22.5.4"
   },
   "jsr": {
+    "@neon/serverless@0.10.4": {
+      "integrity": "90f212b09feb8ed8db0f45112587587e929bdf6676bf7b3a41e407f62d0870ca"
+    },
     "@oak/commons@1.0.0": {
       "integrity": "49805b55603c3627a9d6235c0655aa2b6222d3036b3a13ff0380c16368f607ac",
       "dependencies": [
@@ -61,6 +65,7 @@
     }
   },
   "redirects": {
+    "https://deno.land/x/dotenv/mod.ts": "https://deno.land/x/dotenv@v3.2.2/mod.ts",
     "https://deno.land/x/oak/mod.ts": "https://deno.land/x/oak@v17.1.4/mod.ts"
   },
   "remote": {
@@ -151,6 +156,8 @@
     "https://deno.land/std@0.106.0/testing/_diff.ts": "5d3693155f561d1a5443ac751ac70aab9f5d67b4819a621d4b96b8a1a1c89620",
     "https://deno.land/std@0.106.0/testing/asserts.ts": "5f3a0fddb15a9733e44737e2d52be8e696bb79bc4e3830a9f246c5b8f3b29b31",
     "https://deno.land/std@0.106.0/textproto/mod.ts": "6e8430986393e3929720cec9c6668d75dee2ffd953886e842dc124c251cb86c8",
+    "https://deno.land/x/dotenv@v3.2.2/mod.ts": "077b48773de9205266a0b44c3c3a3c3083449ed64bb0b6cc461b95720678d38e",
+    "https://deno.land/x/dotenv@v3.2.2/util.ts": "693730877b13f8ead2b79b2aa31e2a0652862f7dc0c5f6d2f313f4d39c7b7670",
     "https://deno.land/x/media_types@v2.10.1/db.ts": "d5ecfa410b570874a648aa12bac90d9c6704dc75f1e8c03b8cac97dd02b003ce",
     "https://deno.land/x/media_types@v2.10.1/deps.ts": "67c708236dc0dc64cc41d7622ecaa7643c6f6155842a99cff48453771e223d7d",
     "https://deno.land/x/media_types@v2.10.1/mod.ts": "d63583b978d32eff8b76e1ae5d83cba2fb27baa90cc1bcb0ad15a06122ea8c19",
@@ -221,5 +228,10 @@
     "https://deno.land/x/oak@v9.0.0/util.ts": "e35a708df4f529f14f7a43feaf5bb4dea7fbd3133005342985507fc664f2320e",
     "https://deno.land/x/oak@v9.0.0/websocket.ts": "253972cc412d929e1df8ae4812c62e3b97a481b48b7481c72ba90c03e0e0ab59",
     "https://deno.land/x/path_to_regexp@v6.2.0/index.ts": "e94c04a44bbecac99ff2db2d831afe98b423e627b775cb57fc7935f848c64c51"
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@neon/serverless@~0.10.1"
+    ]
   }
 }

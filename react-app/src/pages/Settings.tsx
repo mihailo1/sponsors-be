@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Button from "../components/Button";
-import { uploadFile } from "../queries";
+import { uploadFile, API_KEY } from "../queries";
 import useToast from "../utils/toast";
 import { ServerStats, StringItem, WordCloudData } from "../../../types";
 import * as d3 from "d3";
@@ -15,7 +15,7 @@ function Settings() {
   const wordCloudRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8000/ws");
+    const ws = new WebSocket(`${API_KEY.replace(/^http/, 'ws')}/ws`);
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
