@@ -1,11 +1,9 @@
-import { Context, config } from "../../deps.ts";
+import { Context } from "../../deps.ts";
 import { StringItem } from "../../types.ts";
 import { neon } from '@neon/serverless';
+import { DATABASE_URL } from "../config/env.ts";
 
-const env = config();
-
-const databaseUrl = env.DATABASE_URL;
-const sql = neon(databaseUrl);
+const sql = neon(DATABASE_URL);
 
 const getAllStrings = async (context: Context) => {
   const stringsArray: StringItem[] = (await sql`SELECT * FROM strings`).map((row: Record<string, any>) => ({

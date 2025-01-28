@@ -2,13 +2,12 @@ import { Application, send, config } from "./deps.ts";
 import router from "./api/routes/router.ts";
 import { handleWebSocket } from "./api/ws/stats.ts";
 import { neon } from '@neon/serverless';
+import { DATABASE_URL } from "./api/config/env.ts";
 
 const env = config();
 const app = new Application();
 
-const databaseUrl = env.DATABASE_URL;
-
-const sql = neon(databaseUrl);
+const sql = neon(DATABASE_URL);
 
 await sql`
   CREATE TABLE IF NOT EXISTS strings (

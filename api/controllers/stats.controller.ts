@@ -1,11 +1,8 @@
 import { ServerStats, StringItem } from "../../types.ts";
-import { config } from "../../deps.ts";
 import { neon } from '@neon/serverless';
+import { DATABASE_URL } from "../config/env.ts";
 
-const env = config();
-
-const databaseUrl = env.DATABASE_URL;
-const sql = neon(databaseUrl);
+const sql = neon(DATABASE_URL);
 
 export async function getServerStats(): Promise<ServerStats> {
   const startTime = performance.now();

@@ -1,10 +1,8 @@
-import { Context, config } from "../../deps.ts";
+import { Context } from "../../deps.ts";
 import { neon } from '@neon/serverless';
+import { DATABASE_URL } from "../config/env.ts";
 
-const env = config();
-
-const databaseUrl = env.DATABASE_URL;
-const sql = neon(databaseUrl);
+const sql = neon(DATABASE_URL);
 
 export async function uploadJsonFile(context: Context) {
   const body = await context.request.body().value as string[];
