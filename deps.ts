@@ -7,3 +7,4 @@ export {
   Router,
   send,
 } from "https://deno.land/x/oak@v9.0.0/mod.ts";
+export { config } from "https://deno.land/x/dotenv/mod.ts";

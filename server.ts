@@ -1,8 +1,21 @@
-import { Application, send } from "./deps.ts";
+import { Application, send, config } from "./deps.ts";
 import router from "./api/routes/router.ts";
 import { handleWebSocket } from "./api/ws/stats.ts";
+import { neon } from '@neon/serverless';
 
+const env = config();
 const app = new Application();
+
+const databaseUrl = env.DATABASE_URL;
+
+const sql = neon(databaseUrl);
+
+await sql`
+  CREATE TABLE IF NOT EXISTS strings (
+    id SERIAL PRIMARY KEY,
+    value TEXT NOT NULL
+  )
+`;
 
 app.use(async (context, next) => {
   context.response.headers.set("Access-Control-Allow-Origin", "*");
@@ -45,7 +58,7 @@ app.use(async (context, next) => {
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-const port = parseInt(Deno.env.get("PORT") || "8000");
+const port = parseInt(env.PORT || "8000");
 
 console.log(`HTTP server is running. Access it at: http://localhost:${port}/`);
 

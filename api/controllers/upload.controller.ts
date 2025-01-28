@@ -1,6 +1,10 @@
-import { Context } from "../../deps.ts";
+import { Context, config } from "../../deps.ts";
+import { neon } from '@neon/serverless';
 
-const kv = await Deno.openKv();
+const env = config();
+
+const databaseUrl = env.DATABASE_URL;
+const sql = neon(databaseUrl);
 
 export async function uploadJsonFile(context: Context) {
   const body = await context.request.body().value as string[];
@@ -8,8 +12,7 @@ export async function uploadJsonFile(context: Context) {
 
   if (body.length > 0) {
     for (const value of body) {
-      const key = ["strings", value];
-      await kv.set(key, value);
+      await sql`INSERT INTO strings (value) VALUES (${value})`;
     }
     context.response.status = 200;
     context.response.body = {
