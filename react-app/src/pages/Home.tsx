@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Table from "../components/Table";
 import Button from "../components/Button";
 import { debounce } from "lodash";
-import { fetchStrings, deleteString, addString } from "../queries";
-
-interface StringItem {
-  id: number;
-  value: string;
-}
+import { addString, deleteString, fetchStrings } from "../queries";
+import useToast from "../utils/toast";
+import { StringItem } from "../../../types";
 
 function Home() {
+  const toast = useToast();
   const [strings, setStrings] = useState<StringItem[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -50,17 +48,25 @@ function Home() {
     deleteString(id)
       .then((data) => {
         setStrings(data);
+        setSearchTerm("");
+        toast.success("String deleted successfully!");
       })
-      .catch((error) => console.error("Error deleting string:", error));
+      .catch((error) => {
+        console.error("Error deleting string:", error);
+        toast.error("Error deleting string!");
+      });
   };
 
-  const handleAdd = () => {
-    addString(searchTerm)
-      .then((data) => {
-        setStrings([...strings, { id: strings.length, value: searchTerm }]);
-        setSearchTerm("");
-      })
-      .catch((error) => console.error("Error adding string:", error));
+  const handleAdd = async () => {
+    try {
+      const data = await addString(searchTerm);
+      setStrings([...strings, { id: `${strings.length}`, value: searchTerm }]);
+      setSearchTerm("");
+      toast.success("String added successfully!");
+    } catch (error) {
+      console.error("Error adding string:", error);
+      toast.error("Error adding string!");
+    }
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -71,7 +77,7 @@ function Home() {
 
   const filteredStrings = strings.filter(
     (str) =>
-      str.value && str.value.toLowerCase().includes(searchTerm.toLowerCase())
+      str.value && str.value.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const columns = [
@@ -111,28 +117,28 @@ function Home() {
         className="mt-4 overflow-y-auto min-h-[200px]"
         style={{ maxHeight: "calc(100vh - 278px)" }}
       >
-        {filteredStrings.length > 0 ? (
-          <Table columns={columns} data={filteredStrings} />
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full mt-8">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              style={{ height: "64px", width: "64px" }}
-              className="text-gray-400 dark:text-dark-text"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                fill="currentColor"
-                d="M17 3.34a10 10 0 1 1-14.995 8.984L2 12l.005-.324A10 10 0 0 1 17 3.34M15 14H9l-.117.007a1 1 0 0 0 0 1.986L9 16h6l.117-.007a1 1 0 0 0 0-1.986zM9.01 9l-.127.007a1 1 0 0 0 0 1.986L9 11l.127-.007a1 1 0 0 0 0-1.986zm6 0l-.127.007a1 1 0 0 0 0 1.986L15 11l.127-.007a1 1 0 0 0 0-1.986z"
-              />
-            </svg>
-            <p className="mt-4 text-gray-500 dark:text-dark-text">
-              Nothing found, add something
-            </p>
-          </div>
-        )}
+        {filteredStrings.length > 0
+          ? <Table columns={columns} data={filteredStrings} />
+          : (
+            <div className="flex flex-col items-center justify-center h-full mt-8">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                style={{ height: "64px", width: "64px" }}
+                className="text-gray-400 dark:text-dark-text"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  fill="currentColor"
+                  d="M17 3.34a10 10 0 1 1-14.995 8.984L2 12l.005-.324A10 10 0 0 1 17 3.34M15 14H9l-.117.007a1 1 0 0 0 0 1.986L9 16h6l.117-.007a1 1 0 0 0 0-1.986zM9.01 9l-.127.007a1 1 0 0 0 0 1.986L9 11l.127-.007a1 1 0 0 0 0-1.986zm6 0l-.127.007a1 1 0 0 0 0 1.986L15 11l.127-.007a1 1 0 0 0 0-1.986z"
+                />
+              </svg>
+              <p className="mt-4 text-gray-500 dark:text-dark-text">
+                Nothing found, press enter to add
+              </p>
+            </div>
+          )}
       </div>
     </div>
   );
