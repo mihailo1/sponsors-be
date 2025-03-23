@@ -1,5 +1,5 @@
 {
-  "name": "react-app",
+  "name": "search-sponsors-admin",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
@@ -43,5 +43,6 @@
     "@types/d3-cloud": "^1.2.9",
     "@types/lodash": "^4.14.168",
     "tailwindcss": "^3.4.17"
-  }
+  },
+  "packageManager": "yarn@4.6.0+sha512.5383cc12567a95f1d668fbe762dfe0075c595b4bfff433be478dbbe24e05251a8e8c3eb992a986667c1d53b6c3a9c85b8398c35a960587fbd9fa3a0915406728"
 }

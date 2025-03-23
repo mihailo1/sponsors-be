@@ -1,6 +1,7 @@
 import { Application, send } from "./deps.ts";
 import router from "./api/routes/router.ts";
 import { handleWebSocket } from "./api/ws/stats.ts";
+import { createSwaggerRouter } from "./api/swagger/swagger.ts";
 
 const app = new Application();
 
@@ -21,6 +22,14 @@ app.use(async (context, next) => {
   await next();
 });
 
+const swaggerRouter = await createSwaggerRouter();
+
+app.use(swaggerRouter.routes());
+app.use(swaggerRouter.allowedMethods());
+app.use(router.routes());
+app.use(router.allowedMethods());
+
+// Add the 404 handler after all routes
 app.use(async (context, next) => {
   try {
     await next();
@@ -42,20 +51,19 @@ app.use(async (context, next) => {
   }
 });
 
-app.use(router.routes());
-app.use(router.allowedMethods());
-
 const port = parseInt(Deno.env.get("PORT") || "8000");
 
 console.log(`HTTP server is running. Access it at: http://localhost:${port}/`);
+console.log(`Swagger UI is available at: http://localhost:${port}/swagger-ui`);
 
 Deno.serve({ port }, async (request) => {
   console.log(`Received request: ${request.method} ${request.url}`);
+
   const wsResponse = handleWebSocket(request);
   if (wsResponse) {
     return wsResponse;
-  } else {
-    const response = await app.handle(request);
-    return response || new Response("Not Found", { status: 404 });
   }
+
+  const response = await app.handle(request);
+  return response || new Response("Not Found", { status: 404 });
 });
