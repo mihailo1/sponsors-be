@@ -1,4 +1,3 @@
-import process from "node:process";
 const API_KEY = process.env.REACT_APP_API_BASE_URL ??
   globalThis.location.origin;
 

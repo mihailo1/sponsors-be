@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const navItems = [
   { path: "/", label: "List" },
@@ -8,17 +8,36 @@ const navItems = [
 ];
 
 function Navbar() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavigate = (path: string) => {
+    if (location.pathname === path) return;
+
+    if (!document.startViewTransition) {
+      navigate(path);
+    } else {
+      document.startViewTransition(() => {
+        navigate(path);
+      });
+    }
+  };
+
   return (
     <nav className="w-64 p-4">
       <ul className="flex flex-col">
         {navItems.map((item, index) => (
           <li className="m-0" key={index}>
-            <Link
-              to={item.path}
-              className="block p-2 rounded hover:bg-blue-100 dark:hover:bg-gray-700 text-gray-800 dark:text-dark-text"
+            <button
+              onClick={() => handleNavigate(item.path)}
+              className={`block w-full text-left p-2 rounded hover:bg-blue-100 dark:hover:bg-gray-700 text-gray-800 dark:text-dark-text ${
+                location.pathname === item.path
+                  ? "bg-blue-100 dark:bg-gray-700 font-semibold"
+                  : ""
+              }`}
             >
               {item.label}
-            </Link>
+            </button>
           </li>
         ))}
       </ul>

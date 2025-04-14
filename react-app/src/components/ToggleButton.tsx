@@ -7,7 +7,14 @@ interface ToggleButtonProps {
 
 function ToggleButton({ darkMode, setDarkMode }: ToggleButtonProps) {
   const handleClick = () => {
-    setDarkMode(!darkMode);
+    // Wrap the state update in startViewTransition
+    if (!document.startViewTransition) {
+      setDarkMode(!darkMode);
+      return;
+    }
+    document.startViewTransition(() => {
+      setDarkMode(!darkMode);
+    });
   };
 
   return (

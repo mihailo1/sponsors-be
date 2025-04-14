@@ -24,7 +24,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "tw": "npx tailwindcss -i ./src/index.css -o ./src/output.css --watch"
   },
   "browserslist": {
     "production": [
