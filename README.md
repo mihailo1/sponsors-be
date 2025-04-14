@@ -1,90 +1,24 @@
-# Simple Deno App
+A web application to manage and search strings, upload JSON files, and visualize data using word clouds. The app includes an admin panel with three main pages: List, API Documentation, and Settings.
 
-This is a simple Deno application that starts an HTTP server and serves a React
-app with a menu and three pages.
+### Stack:
+
+<a href="https://deno.land/" title="Deno"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Deno_2021.svg" alt="Deno" width="21px" height="21px"></a>
+<a href="https://reactjs.org/" title="React"><img src="https://github.com/get-icon/geticon/raw/master/icons/react.svg" alt="React" width="21px" height="21px"></a>
+<a href="https://www.typescriptlang.org/" title="Typescript"><img src="https://github.com/get-icon/geticon/raw/master/icons/typescript-icon.svg" alt="Typescript" width="21px" height="21px"></a>
+<a href="https://tailwindcss.com/" title="Tailwind"><img src="https://www.svgrepo.com/show/374118/tailwind.svg" alt="Tailwind" width="21px" height="21px"></a>
+<a href="https://eslint.org/" title="Eslint"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/ESLint_logo.svg" alt="Eslint" width="21px" height="21px"></a>
+<a href="https://d3js.org/" title="D3.js"><img src="https://d3js.org/logo.svg" alt="Eslint" width="21px" height="21px"></a>
+
+## Features
+
+- **Admin Panel**: Includes pages for managing strings, viewing API documentation, and uploading JSON files.
+- **WebSocket Integration**: Real-time server stats updates.
+- **Word Cloud Visualization**: Displays string data in a word cloud format.
+- **Swagger UI**: API documentation available at `/swagger-ui`.
+- **Dark Mode**: Fully integrated dark mode support.
 
 ## Requirements
 
 - [Deno](https://deno.land/) (version 1.14.0 or later)
-- [Denon](https://deno.land/x/denon) (for live reloading)
-- [Node.js](https://nodejs.org/) (for building the React app)
-
-## Installation
-
-You can install Deno using one of the following methods:
-
-### Shell (Mac, Linux):
-
-```sh
-curl -fsSL https://deno.land/x/install/install.sh | sh
-```
-
-### Homebrew (Mac):
-
-```sh
-brew install deno
-```
-
-### PowerShell (Windows):
-
-```sh
-iwr https://deno.land/x/install/install.ps1 -useb | iex
-```
-
-You can install Denon using the following command:
-
-```sh
-deno install -qAf --unstable https://deno.land/x/denon/denon.ts
-```
-
-Make sure to add the installation path to your system's PATH:
-
-```sh
-export PATH="$HOME/.deno/bin:$PATH"
-```
-
-Then, reload your shell configuration:
-
-```sh
-source ~/.zshrc  # or source ~/.bashrc
-```
-
-## Setting Up the React Project
-
-1. Navigate to the `react-app` directory:
-   ```sh
-   cd /Users/misha/Documents/reps.nosync/sponsors-app/react-app
-   ```
-
-2. Install the dependencies:
-   ```sh
-   yarn
-   ```
-
-3. Build the React app:
-   ```sh
-   yarn build
-   ```
-
-## Running the Server
-
-Ensure the React app is built before starting the server. If not, run
-`yarn build` in the `react-app` directory.
-
-To start the server with live reloading, run the following command in your
-terminal:
-
-```sh
-denon start
-```
-
-The server will be accessible at `http://localhost:8000/`.
-
-## Troubleshooting
-
-If you encounter the error `TypeError: server is not async iterable`, ensure
-that you are using the correct method to handle requests. Update your
-`server.ts` file to use `listenAndServe` instead of `serve`.
-
-If you encounter the error `Module not found`, ensure that you have the correct
-import paths in your `deps.ts` file.
+- [Denon](https://deno.land/x/denon)
+- [Node.js](https://nodejs.org/) (22+)
