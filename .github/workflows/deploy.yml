@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: main
+    branches: [main]
   pull_request:
-    branches: main
+    branches: [main]
 
 jobs:
   deploy:
@@ -23,12 +23,21 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Build step
-        run: "deno task start"
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies and build React app
+        run: |
+          cd react-app
+          yarn install --frozen-lockfile
+          yarn build
+          cd ..
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: "<your-project-name>"
-          entrypoint: "main.ts"
+          project: "michael-sponsors-be-84"
+          entrypoint: "server.ts"
           root: "."
