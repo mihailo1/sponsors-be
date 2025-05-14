@@ -1,3 +1,5 @@
 node_modules
 .env*
 deno.lock
+react-app/.yarn/install-state.gz
+react-app/build/

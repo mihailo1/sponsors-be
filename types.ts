@@ -9,7 +9,7 @@ export interface ServerStats {
   uniqueStringsCount: number;
   averageStringLength: number;
   memoryUsage: number;
-  cpuUsage: string;
+  systemMemoryInfo: Deno.SystemMemoryInfo;
   strings: StringItem[];
 }
 

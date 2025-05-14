@@ -40,3 +40,39 @@ nav ul li {
   @apply bg-white w-6 h-6 rounded-full shadow-md transform transition-transform
     duration-300;
 }
+
+/* Define cross-fade animations */
+@keyframes fade-out {
+  to { opacity: 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+::view-transition-old(root) {
+  animation: fade-out 0.3s ease-out forwards;
+}
+
+::view-transition-new(root) {
+  animation: fade-in 0.3s ease-in forwards;
+}
+
+/* Define slide animations for route changes (main-content transition) */
+@keyframes slide-from-right {
+  from { transform: translateX(30px); opacity: 0; }
+}
+
+@keyframes slide-to-left {
+  to { transform: translateX(-30px); opacity: 0; }
+}
+
+/* Route change transition */
+::view-transition-old(main-content) {
+  animation: slide-to-left 0.3s ease-in-out forwards;
+}
+
+::view-transition-new(main-content) {
+  animation: slide-from-right 0.3s ease-in-out forwards;
+}

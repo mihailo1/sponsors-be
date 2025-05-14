@@ -28,15 +28,15 @@ export async function getServerStats(): Promise<ServerStats> {
   const randomStrings = allStrings.sort(() => 0.5 - Math.random()).slice(0, 25);
 
   const endTime = performance.now();
-  const requestDuration = endTime - startTime;
+  // const requestDuration = endTime - startTime;
 
   const stats: ServerStats = {
     uptime: performance.now(),
     stringsCount,
     uniqueStringsCount,
     averageStringLength,
-    memoryUsage: requestDuration,
-    cpuUsage: "Not available on Windows",
+    memoryUsage: Deno.memoryUsage().heapUsed,
+    systemMemoryInfo: Deno.systemMemoryInfo(),
     strings: randomStrings,
   };
 

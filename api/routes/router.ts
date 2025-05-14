@@ -69,7 +69,6 @@ const routes = [
     requestSchema: null,
     responseSchema: "{ uptime: number, stringsCount: number }",
   },
-  // Add other routes as needed
 ];
 
 router.get("/api/strings", stringController.getAllStrings);
