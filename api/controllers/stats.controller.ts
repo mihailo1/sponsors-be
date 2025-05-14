@@ -3,7 +3,7 @@ import { ServerStats, StringItem } from "../../types.ts";
 const kv = await Deno.openKv();
 
 export async function getServerStats(): Promise<ServerStats> {
-  const startTime = performance.now();
+  // const startTime = performance.now();
 
   const entries = kv.list({ prefix: ["strings"] });
   let stringsCount = 0;
@@ -27,7 +27,7 @@ export async function getServerStats(): Promise<ServerStats> {
   // Get 25 random entries
   const randomStrings = allStrings.sort(() => 0.5 - Math.random()).slice(0, 25);
 
-  const endTime = performance.now();
+  // const endTime = performance.now();
   // const requestDuration = endTime - startTime;
 
   const stats: ServerStats = {
