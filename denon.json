@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": {
-      "cmd": "deno run --allow-net --allow-read --allow-write --allow-env server.ts",
+      "cmd": "deno run start",
       "desc": "Run the server with live reloading"
     },
     "lint": {

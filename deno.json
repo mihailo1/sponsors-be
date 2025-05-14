@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "start": "deno run --allow-net --allow-read --allow-import --allow-write --allow-env --watch --unstable-kv server.ts",
+    "start": "deno run --allow-net --allow-read --allow-import --allow-write --allow-env --watch --unstable-kv --allow-sys server.ts",
     "lint": "deno lint",
     "fmt": "deno fmt"
   },

@@ -18,27 +18,34 @@ const getAllStrings = async (context: Context) => {
 
 const createString = async (context: Context) => {
   try {
-    const body = await context.request.body().value;
-    if (body && typeof body === "object" && body.value) {
+    if (!context.request.hasBody) {
+      context.response.status = 400;
+      context.response.body = { error: "No body provided" };
+      return;
+    }
+
+    const body = await context.request.body.json();
+
+    if (body && typeof body === "object" && "value" in body && typeof body.value === "string") {
       const key = ["strings", body.value];
       await kv.set(key, body.value);
       context.response.status = 201;
       context.response.body = { message: "String created successfully" };
     } else {
       context.response.status = 400;
-      context.response.body = { error: "Invalid input" };
+      context.response.body = { error: "Invalid input: 'value' field is required and must be a string" };
     }
   } catch (error) {
     console.error("Failed to parse JSON body:", error);
     context.response.status = 400;
-    context.response.body = { error: "Invalid JSON", extra: error };
+    context.response.body = { error: "Invalid JSON", extra: error instanceof Error ? error.message : String(error) };
   }
 };
 
 const updateString = async (context: Context) => {
   const id = context.request.url.searchParams.get("id");
   try {
-    const body = await context.request.body().value;
+    const body = await context.request.body.json();
     if (id != null && body.value) {
       const key = ["strings", id];
       await kv.set(key, body.value);

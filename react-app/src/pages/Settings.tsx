@@ -176,7 +176,9 @@ function Settings() {
           <p>Server Uptime: {stats.uptime} seconds</p>
           <p>Number of Strings: {stats.stringsCount}</p>
           <p>Memory Usage: {stats.memoryUsage} MB</p>
-          <p>CPU Usage: {stats.cpuUsage} %</p>
+          <p>RAM Usage: {stats.systemMemoryInfo.total} KB ({((stats.systemMemoryInfo.total / 1024 / 1024)).toFixed(2)} MB, {((stats.systemMemoryInfo.total / 1024 / 1024 / 1024)).toFixed(2)} GB)</p>
+          <p>RAM Available: {stats.systemMemoryInfo.available} KB ({((stats.systemMemoryInfo.available / 1024 / 1024)).toFixed(2)} MB, {((stats.systemMemoryInfo.available / 1024 / 1024 / 1024)).toFixed(2)} GB)</p>
+          <p>RAM: {((stats.systemMemoryInfo.total - stats.systemMemoryInfo.available) / stats.systemMemoryInfo.total * 100).toFixed(2)}%</p>
         </div>
       )}
       <div id="word-cloud" ref={wordCloudRef} className="mt-8"></div>
