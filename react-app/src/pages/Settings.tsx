@@ -15,7 +15,7 @@ function Settings() {
   const wordCloudRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ws = new WebSocket(`${window.location.protocol === "https" ? "wss" : "ws"}://${window.location.host.replace('3000', '8000')}/ws`);
+    const ws = new WebSocket(`wss://${window.location.host.replace('3000', '8000')}/ws`);
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
