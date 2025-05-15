@@ -13,10 +13,9 @@ function Settings() {
   const [strings, setStrings] = useState<StringItem[]>([]);
   const toast = useToast();
   const wordCloudRef = useRef<HTMLDivElement>(null);
-  console.log(window.location.host.replace('3000', '8000'));
 
   useEffect(() => {
-    const ws = new WebSocket(`ws://${window.location.host.replace('3000', '8000')}/ws`);
+    const ws = new WebSocket(`${window.location.protocol === "https" ? "wss" : "ws"}://${window.location.host.replace('3000', '8000')}/ws`);
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
