@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Table from "../components/Table";
 import Button from "../components/Button";
 import { debounce } from "lodash";
@@ -9,40 +9,38 @@ import { StringItem } from "../../../types";
 function Home() {
   const toast = useToast();
   const [strings, setStrings] = useState<StringItem[]>([]);
+  const [lastAddedString, setLastAddedString] = useState<StringItem | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  useEffect(() => {
-    fetchStrings("")
-      .then((data) => {
-        console.log("Fetched data:", data);
-        if (Array.isArray(data)) {
-          setStrings(data);
-        } else {
-          console.error("Unexpected data format:", data);
-        }
-      })
-      .catch((error) => console.error("Error fetching strings:", error));
-  }, []);
-
-  useEffect(() => {
-    const debouncedSearch = debounce(() => {
-      fetchStrings(searchTerm)
+  const debouncedSearch = useCallback(
+    debounce((term: string) => {
+      fetchStrings(term)
         .then((data) => {
           if (Array.isArray(data)) {
-            setStrings(data);
+            setStrings([
+              ...(lastAddedString ? [lastAddedString] : []),
+              ...data,
+            ]);
           } else {
             console.error("Unexpected data format:", data);
           }
         })
         .catch((error) => console.error("Error fetching strings:", error));
-    }, 300);
+    }, 300),
+    [lastAddedString] // Dependency: lastAddedString
+  );
 
-    debouncedSearch();
+  useEffect(() => {
+    if (searchTerm !== "") {
+      setLastAddedString(null);
+    }
+
+    debouncedSearch(searchTerm);
 
     return () => {
       debouncedSearch.cancel();
     };
-  }, [searchTerm]);
+  }, [searchTerm, debouncedSearch]);
 
   const handleDelete = (id: number) => {
     deleteString(id)
@@ -60,7 +58,7 @@ function Home() {
   const handleAdd = async () => {
     try {
       const data = await addString(searchTerm);
-      setStrings([...strings, { id: `${strings.length}`, value: searchTerm }]);
+      setLastAddedString({ id: `${strings.length}`, value: searchTerm });
       setSearchTerm("");
       toast.success("String added successfully!");
     } catch (error) {

@@ -38,6 +38,7 @@ function App() {
   const location = useLocation();
 
   console.log("location:", location);
+  console.log("window.location:", window.location);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
