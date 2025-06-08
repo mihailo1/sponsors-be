@@ -2,6 +2,10 @@ import { Application, send } from "./deps.ts";
 import router from "./api/routes/router.ts";
 import { handleWebSocket } from "./api/ws/stats.ts";
 import { createSwaggerRouter } from "./api/swagger/swagger.ts";
+import { buildReactApp } from "./api/utils/react_build.ts";
+
+// Build the React app before starting the server
+await buildReactApp();
 
 const app = new Application();
 
