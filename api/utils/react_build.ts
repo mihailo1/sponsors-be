@@ -26,15 +26,13 @@ export async function buildReactApp() {
       });
       const { code } = await buildCmd.output();
       if (code !== 0) {
-        console.error(`React build failed with exit code ${code}`);
-        Deno.exit(code);
+        throw new Error(`React build failed with exit code ${code}`);
       }
       // Touch the build stamp file
       await Deno.writeTextFile(buildStamp, new Date().toISOString());
       console.log("React app built successfully.");
     } catch (err) {
-      console.error("Error running 'corepack yarn build' for React app:", err);
-      Deno.exit(1);
+      throw new Error(`Error running 'corepack yarn build' for React app: ${err}`);
     }
   }
 }
