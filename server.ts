@@ -2,6 +2,10 @@ import { Application, send } from "./deps.ts";
 import router from "./api/routes/router.ts";
 import { handleWebSocket } from "./api/ws/stats.ts";
 import { createSwaggerRouter } from "./api/swagger/swagger.ts";
+import { buildReactApp } from "./api/utils/react_build.ts";
+
+// Build the React app before starting the server
+await buildReactApp();
 
 const app = new Application();
 
@@ -52,9 +56,13 @@ app.use(async (context, next) => {
 });
 
 const port = parseInt(Deno.env.get("PORT") || "8000");
+const baseUrl = Deno.env.get("BASE_URL") || `http://localhost:${port}`;
+const wsProtocol = baseUrl.startsWith("https") ? "wss" : "ws";
+const wsUrl = baseUrl.replace(/^https?/, wsProtocol) + "/ws";
 
-console.log(`HTTP server is running. Access it at: http://localhost:${port}/`);
-console.log(`Swagger UI is available at: http://localhost:${port}/swagger-ui`);
+console.log(`HTTP server is running. Access it at: ${baseUrl}/`);
+console.log(`Swagger UI is available at: ${baseUrl}/swagger-ui`);
+console.log(`WebSocket server is running. Connect at: ${wsUrl}`);
 
 Deno.serve({ port }, async (request) => {
   console.log(`Received request: ${request.method} ${request.url}`);
