@@ -1,4 +1,4 @@
-// Utility to build the React app, only if not built in the last 10 minutes
+// Utility to build the React app, only if built in the last 10 minutes
 
 export async function buildReactApp() {
   const buildDir = `${Deno.cwd()}/react-app/build`;
@@ -14,6 +14,11 @@ export async function buildReactApp() {
     }
   } catch (_) {
     // File does not exist, so we should build
+  }
+  // Skip build in CI/CD or Deno Deploy environments
+  if (Deno.env.get("CI") === "true" || Deno.env.get("DENO_DEPLOYMENT_ID")) {
+    console.log("Skipping React build in CI/CD or Deno Deploy environment.");
+    return;
   }
   if (shouldBuild) {
     try {
