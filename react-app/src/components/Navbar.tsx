@@ -24,8 +24,8 @@ function Navbar() {
   };
 
   return (
-    <nav className="w-64 p-4">
-      <ul className="flex flex-col">
+    <nav className="w-40 p-4">
+      <ul className="flex flex-col gap-1">
         {navItems.map((item, index) => (
           <li className="m-0" key={index}>
             <button

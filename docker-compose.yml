@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: sponsors-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sponsors-app
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis
+      - IS_DOCKER=true
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    command: ["deno", "run", "--allow-all", "server.ts"]

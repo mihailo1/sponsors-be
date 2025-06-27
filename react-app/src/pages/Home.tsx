@@ -4,7 +4,7 @@ import Button from "../components/Button";
 import { debounce } from "lodash";
 import { addString, deleteString, fetchStrings } from "../queries";
 import useToast from "../utils/toast";
-import { StringItem } from "../../../types";
+import { StringItem } from "../types";
 
 function Home() {
   const toast = useToast();

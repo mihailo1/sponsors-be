@@ -1,17 +1,22 @@
 import { Context } from "../../deps.ts";
 import { StringItem } from "../../types.ts";
+import { connectRedis, RedisClient } from "../../deps.ts";
 
-const kv = await Deno.openKv();
+let redis: RedisClient | null = null;
+async function getRedis() {
+  if (!redis) {
+    redis = await connectRedis({ hostname: Deno.env.get("REDIS_HOST") || "redis", port: 6379 });
+  }
+  return redis;
+}
 
 const getAllStrings = async (context: Context) => {
-  const entries = kv.list({ prefix: ["strings"] });
-  const stringsArray: StringItem[] = [];
-  for await (const entry of entries) {
-    stringsArray.push({
-      id: entry.key[1] as string,
-      value: entry.value as string,
-    });
-  }
+  const redis = await getRedis();
+  const keys = await redis.smembers("strings");
+  const stringsArray: StringItem[] = keys.map((value: string) => ({
+    id: value,
+    value,
+  }));
   context.response.status = 200;
   context.response.body = JSON.stringify(stringsArray);
 };
@@ -27,73 +32,72 @@ const createString = async (context: Context) => {
     const body = await context.request.body.json();
 
     if (body && typeof body === "object" && "value" in body && typeof body.value === "string") {
-      const key = ["strings", body.value];
-      await kv.set(key, body.value);
+      const redis = await getRedis();
+      await redis.sadd("strings", body.value);
       context.response.status = 201;
-      context.response.body = { message: "String created successfully" };
+      context.response.body = { message: "String added" };
     } else {
       context.response.status = 400;
-      context.response.body = { error: "Invalid input: 'value' field is required and must be a string" };
+      context.response.body = { error: "Invalid body" };
     }
   } catch (error) {
-    console.error("Failed to parse JSON body:", error);
-    context.response.status = 400;
-    context.response.body = { error: "Invalid JSON", extra: error instanceof Error ? error.message : String(error) };
+    context.response.status = 500;
+    context.response.body = { error: error instanceof Error ? error.message : String(error) };
   }
 };
 
 const updateString = async (context: Context) => {
-  const id = context.request.url.searchParams.get("id");
+  const id = (context as Context & { params?: Record<string, string> }).params?.id || context.request.url.searchParams.get("id");
   try {
     const body = await context.request.body.json();
     if (id != null && body.value) {
-      const key = ["strings", id];
-      await kv.set(key, body.value);
+      const redis = await getRedis();
+      await redis.srem("strings", id);
+      await redis.sadd("strings", body.value);
       context.response.status = 200;
       context.response.body = { message: "String updated successfully" };
     } else {
       context.response.status = 400;
-      context.response.body = "Bad Request";
+      context.response.body = { error: "Invalid request" };
     }
   } catch (error) {
-    console.error("Failed to parse JSON body:", error);
-    context.response.status = 400;
-    context.response.body = "Invalid JSON";
+    context.response.status = 500;
+    context.response.body = { error: error instanceof Error ? error.message : String(error) };
   }
 };
 
 const deleteString = async (context: Context) => {
-  const id = context.request.url.pathname.split("/").pop();
-  if (id != null) {
-    const key = ["strings", id];
-    await kv.delete(key);
-
-    // Fetch the updated list of strings
-    const entries = kv.list({ prefix: ["strings"] });
-    const stringsArray: StringItem[] = [];
-    for await (const entry of entries) {
-      stringsArray.push({
-        id: entry.key[1] as string,
-        value: entry.value as string,
-      });
-    }
-
-    context.response.status = 200;
-    context.response.body = stringsArray;
+  let id: string | undefined = undefined;
+  if ((context as Context & { params?: Record<string, string> }).params?.id) {
+    id = (context as Context & { params: Record<string, string> }).params.id;
   } else {
-    context.response.status = 400;
-    context.response.body = "Bad Request";
+    const match = context.request.url.pathname.match(/\/api\/strings\/(.+)$/);
+    if (match) id = match[1];
+  }
+  try {
+    if (id) {
+      const redis = await getRedis();
+      await redis.srem("strings", id);
+      context.response.status = 200;
+      context.response.body = { message: "String deleted successfully" };
+    } else {
+      context.response.status = 400;
+      context.response.body = { error: "Invalid id" };
+    }
+  } catch (error) {
+    context.response.status = 500;
+    context.response.body = { error: error instanceof Error ? error.message : String(error) };
   }
 };
 
 const searchStrings = async (context: Context) => {
   const query = context.request.url.searchParams.get("query") || "";
-  const entries = kv.list({ prefix: ["strings"] });
+  const redis = await getRedis();
+  const allStrings = await redis.smembers("strings");
   const filteredStrings: StringItem[] = [];
-  for await (const entry of entries) {
-    const value = entry.value as string;
+  for (const value of allStrings) {
     if (value.toLowerCase().includes(query.toLowerCase())) {
-      filteredStrings.push({ id: entry.key[1] as string, value });
+      filteredStrings.push({ id: value, value });
     }
     if (filteredStrings.length >= 100) {
       break;

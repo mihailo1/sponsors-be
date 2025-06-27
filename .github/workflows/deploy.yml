@@ -10,35 +10,19 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
 
-    permissions:
-      id-token: write # Needed for auth with Deno Deploy
-      contents: read # Needed to clone the repository
-
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
 
-      - name: Install Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
+      - name: Build and run with Docker Compose
+        run: docker compose up --build -d
 
-      - name: Install step
-        run: "corepack enable; corepack prepare yarn@4.6.0 --activate"
+      - name: Check app health
+        run: |
+          sleep 10
+          curl --fail http://localhost:8000/api/stats
 
-      - name: Build step
-        run: "cd react-app; yarn install --frozen-lockfile; yarn build"
 
-      - name: Upload to Deno Deploy
-        uses: denoland/deployctl@v1
-        with:
-          project: "michael-sponsors-be-84"
-          entrypoint: "server.ts"
-          root: ""
-          
-          
