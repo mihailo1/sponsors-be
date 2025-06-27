@@ -3,9 +3,9 @@
 # Stage 1: Build React app
 FROM node:22-alpine AS react-build
 WORKDIR /react-app
-COPY react-app/package.json react-app/yarn.lock ./
+COPY react-app/package.json react-app/yarn.lock react-app/.yarn/ ./
 RUN corepack enable && corepack prepare yarn@4.6.0 --activate
-RUN yarn install --frozen-lockfile
+RUN yarn install --immutable
 COPY react-app/ ./
 RUN yarn build
 
