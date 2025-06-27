@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy to Deno Deploy
 on:
   push:
     branches: main
@@ -7,22 +7,29 @@ on:
 
 jobs:
   deploy:
-    name: Deploy
     runs-on: ubuntu-latest
-
     steps:
-      - name: Clone repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v3
+      - name: Install Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
 
-      - name: Build and run with Docker Compose
-        run: docker compose up --build -d
-
-      - name: Check app health
+      - name: Build React app
         run: |
-          sleep 10
-          curl --fail http://localhost:8000/api/stats
+          cd react-app
+          corepack enable && corepack prepare yarn@4.6.0 --activate
+          yarn install --immutable
+          yarn build
+          cd ..
+
+      - name: Deploy to Deno Deploy
+        uses: denoland/deployctl@v1
+        with:
+          project: "michael-sponsors-be-84"
+          entrypoint: "server.ts"
+          root: ""
 
 
