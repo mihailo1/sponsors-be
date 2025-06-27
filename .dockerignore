@@ -1,0 +1,2 @@
+# Ignore .yarn if it does not exist, so Docker COPY does not fail
+!react-app/.yarn/

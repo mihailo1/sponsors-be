@@ -3,7 +3,9 @@
 # Stage 1: Build React app
 FROM node:22-alpine AS react-build
 WORKDIR /react-app
-COPY react-app/package.json react-app/yarn.lock react-app/.yarn/ ./
+COPY react-app/package.json react-app/yarn.lock ./
+# Only copy .yarn if it exists (will be ignored if missing due to .dockerignore)
+COPY react-app/.yarn/ ./
 RUN corepack enable && corepack prepare yarn@4.6.0 --activate
 RUN yarn install --immutable
 COPY react-app/ ./
