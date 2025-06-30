@@ -143,14 +143,14 @@ function Settings() {
       {stats && (
         <div className="mt-8 flex flex-col items-center gap-4">
           <div className="flex flex-row gap-8 items-end">
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center max-w-[140px]">
               <span className="text-lg font-medium">Strings Count</span>
               <span id="stringsCount" className="text-3xl font-bold text-blue-600">0</span>
               <div className="h-3 w-[300px] bg-gray-200 rounded mt-2 relative">
                 <div id="stringsBar" className="h-3 bg-blue-400 rounded transition-all duration-500" style={{ width: 0 }}></div>
               </div>
             </div>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center max-w-[140px]">
               <span className="text-lg font-medium">Avg. String Length</span>
               <span id="averageLength" className="text-3xl font-bold text-green-600">0</span>
               <div className="h-3 w-[300px] bg-gray-200 rounded mt-2 relative">

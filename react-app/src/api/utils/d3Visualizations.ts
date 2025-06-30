@@ -169,8 +169,8 @@ export function animateStringsStats(stats: any) {
       return progress === 1;
     });
   };
-  animateValue("#stringsCount", 0, stats.stringsCount, 1000);
-  animateValue("#averageLength", 0, stats.averageStringLength, 1000);
+  animateValue("#stringsCount", 0, stats.stringsCount, 100);
+  animateValue("#averageLength", 0, stats.averageStringLength, 100);
   d3.select("#stringsBar")
     .style("width", (stats.stringsCount / maxCount * 300) + "px");
   d3.select("#lengthBar")
