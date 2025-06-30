@@ -1,7 +1,5 @@
 import { UpstashRedis, connectRedis, RedisClient } from "../../deps.ts";
 
-console.log("ENV VARS", Object.fromEntries(Deno.env.toObject ? Object.entries(Deno.env.toObject()) : Object.entries(Deno.env)));
-
 let redis: RedisClient | null = null;
 let upstashRedis: InstanceType<typeof UpstashRedis> | null = null;
 
