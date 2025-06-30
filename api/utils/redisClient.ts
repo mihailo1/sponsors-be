@@ -1,4 +1,4 @@
-import { UpstashRedis, connectRedis, RedisClient } from "../deps.ts";
+import { UpstashRedis, connectRedis, RedisClient } from "../../deps.ts";
 
 let redis: RedisClient | null = null;
 let upstashRedis: InstanceType<typeof UpstashRedis> | null = null;
