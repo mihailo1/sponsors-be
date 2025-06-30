@@ -25,6 +25,7 @@ jobs:
           cd react-app
           corepack enable && corepack prepare yarn@4.6.0 --activate
           yarn install --immutable
+          yarn tw
           yarn build
           cd ..
 
