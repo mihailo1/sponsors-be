@@ -1,25 +1,17 @@
 import { ServerStats, StringItem } from "../../types.ts";
-
-const kv = await Deno.openKv();
+import { getRedis } from "../utils/redisClient.ts";
 
 export async function getServerStats(): Promise<ServerStats> {
-  const startTime = performance.now();
-
-  const entries = kv.list({ prefix: ["strings"] });
-  let stringsCount = 0;
-  const uniqueStrings = new Set<string>();
+  // const _startTime = performance.now();
+  const redis = await getRedis();
+  const allValues = await redis.smembers("strings");
+  const stringsCount = allValues.length;
+  const uniqueStrings = new Set<string>(allValues);
   let totalLength = 0;
-  const allStrings: StringItem[] = [];
-
-  for await (const entry of entries) {
-    stringsCount++;
-    uniqueStrings.add(entry.value as string);
-    totalLength += (entry.value as string).length;
-    allStrings.push({
-      id: entry.key[1] as string,
-      value: entry.value as string,
-    });
-  }
+  const allStrings: StringItem[] = allValues.map((value: string) => {
+    totalLength += value.length;
+    return { id: value, value };
+  });
 
   const uniqueStringsCount = uniqueStrings.size;
   const averageStringLength = stringsCount > 0 ? totalLength / stringsCount : 0;
@@ -27,8 +19,8 @@ export async function getServerStats(): Promise<ServerStats> {
   // Get 25 random entries
   const randomStrings = allStrings.sort(() => 0.5 - Math.random()).slice(0, 25);
 
-  const endTime = performance.now();
-  // const requestDuration = endTime - startTime;
+  // const _endTime = performance.now();
+  // const requestDuration = _endTime - _startTime;
 
   const stats: ServerStats = {
     uptime: performance.now(),

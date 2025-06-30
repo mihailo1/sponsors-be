@@ -2,9 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import Button from "../components/Button";
 import { uploadFile } from "../queries";
 import useToast from "../utils/toast";
-import { ServerStats, StringItem, WordCloudData } from "../../../types";
-import * as d3 from "d3";
+import { ServerStats, StringItem, WordCloudData } from "../types";
 import cloud from "d3-cloud";
+import {
+  drawWordCloud,
+  drawRamGauge,
+  drawMemoryBar,
+  drawUptime,
+  animateStringsStats,
+} from "../api/utils/d3Visualizations";
 
 function Settings() {
   const [file, setFile] = useState<File | null>(null);
@@ -13,89 +19,52 @@ function Settings() {
   const [strings, setStrings] = useState<StringItem[]>([]);
   const toast = useToast();
   const wordCloudRef = useRef<HTMLDivElement>(null);
+  const ramGaugeRef = useRef<HTMLDivElement>(null);
+  const memoryBarRef = useRef<HTMLDivElement>(null);
+  const uptimeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ws = new WebSocket(`wss://${window.location.host.replace('3000', '8000')}/ws`);
+    // Use ws:// for localhost (dev), wss:// for production
+    const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    const wsProtocol = isLocalhost ? "ws" : "wss";
+    const wsPort = window.location.port === "3000" ? "8000" : window.location.port;
+    const wsUrl = `${wsProtocol}://${window.location.hostname}:${wsPort}/ws`;
+    const ws = new WebSocket(wsUrl);
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("Received WebSocket message:", data);
       setStats(data);
       setStrings(data.strings);
     };
-
     ws.onerror = (error) => {
       console.error("WebSocket error:", error);
     };
-
     return () => {
       ws.close();
     };
   }, []);
 
+  // Helper: check if total or available in systemMemoryInfo is 0
+  const hasZeroSystemMemory = (info: any) => {
+    if (!info) return true;
+    // Only check total and available fields
+    return info.total === 0 || info.available === 0;
+  };
+
+  // Merge all D3 visualizations into one useEffect
   useEffect(() => {
-    const interval = setInterval(() => {
-      const wordCloudData: WordCloudData[] = strings.map((str) => ({
-        text: str.value,
-        size: 10 + Math.random() * 90,
-      }));
-
-      const containerWidth = wordCloudRef.current?.offsetWidth || 800;
-      const layout = cloud()
-        .size([containerWidth, 400])
-        .words(wordCloudData)
-        .padding(5)
-        .rotate(() => (Math.random() > 0.5 ? 90 : 0))
-        .font("Impact")
-        .fontSize((d) => d.size || 10) // Ensure size is always a number
-        .on("end", draw);
-
-      layout.start();
-
-      function draw(words: any) {
-        console.log("Drawing word cloud with words:", words);
-        d3.select("#word-cloud").selectAll("*").remove();
-
-        const svg = d3.select("#word-cloud")
-          .append("svg")
-          .attr("width", layout.size()[0])
-          .attr("height", layout.size()[1])
-          .append("g")
-          .attr(
-            "transform",
-            "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 +
-              ")",
-          );
-
-        const color = d3.scaleOrdinal(d3.schemePastel1);
-
-        const text = svg.selectAll("text")
-          .data(words)
-          .enter()
-          .append("text")
-          .style("font-size", (d: any) => d.size + "px")
-          .style("font-family", "Impact")
-          .style("fill", (d: any, i: any) => color(i.toString()))
-          .attr("text-anchor", "middle")
-          .attr(
-            "transform",
-            (d: any) => "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")",
-          )
-          .style("opacity", 0)
-          .text((d: any) => d.text);
-
-        text.transition()
-          .duration(750)
-          .attr(
-            "transform",
-            (d: any) => "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")",
-          )
-          .style("opacity", 1);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [strings]);
+    if (!stats) return;
+    // Word cloud
+    drawWordCloud(strings.map((str) => ({ text: str.value, size: 10 + Math.random() * 90 })), wordCloudRef.current);
+    // Strings stats
+    animateStringsStats(stats);
+    // Memory and uptime (if systemMemoryInfo is valid)
+    if (!hasZeroSystemMemory(stats.systemMemoryInfo)) {
+      drawRamGauge(stats, ramGaugeRef.current);
+      drawMemoryBar(stats, memoryBarRef.current);
+      drawUptime(stats, uptimeRef.current);
+    }
+  }, [stats, strings]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -109,7 +78,7 @@ function Settings() {
       const reader = new FileReader();
       reader.onload = () => {
         uploadFile(reader.result)
-          .then((data) => {
+          .then(() => {
             toast.success("File uploaded successfully!");
             setFile(null);
           })
@@ -171,14 +140,27 @@ function Settings() {
           Replace list
         </Button>
       </div>
+      {/* Fancy D3 Strings Stats */}
       {stats && (
-        <div className="mt-4 text-gray-800 dark:text-dark-text">
-          <p>Server Uptime: {stats.uptime} seconds</p>
-          <p>Number of Strings: {stats.stringsCount}</p>
-          <p>Memory Usage: {stats.memoryUsage} MB</p>
-          <p>RAM Usage: {stats.systemMemoryInfo.total} KB ({((stats.systemMemoryInfo.total / 1024 / 1024)).toFixed(2)} MB, {((stats.systemMemoryInfo.total / 1024 / 1024 / 1024)).toFixed(2)} GB)</p>
-          <p>RAM Available: {stats.systemMemoryInfo.available} KB ({((stats.systemMemoryInfo.available / 1024 / 1024)).toFixed(2)} MB, {((stats.systemMemoryInfo.available / 1024 / 1024 / 1024)).toFixed(2)} GB)</p>
-          <p>RAM: {((stats.systemMemoryInfo.total - stats.systemMemoryInfo.available) / stats.systemMemoryInfo.total * 100).toFixed(2)}%</p>
+        <div className="mt-8 flex flex-col items-center gap-4">
+          <div className="flex flex-row gap-8 items-end">
+            <div className="flex flex-col items-center max-w-[160px] dark:text-dark-text">
+              <span className="text-lg font-medium">Strings Count</span>
+              <span id="stringsCount" className="text-3xl font-bold text-blue-600">0</span>
+            </div>
+            <div className="flex flex-col items-center max-w-[160px] dark:text-dark-text">
+              <span className="text-lg font-medium">Avg. String Length</span>
+              <span id="averageLength" className="text-3xl font-bold text-green-600">0</span>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Hide memory if any systemMemoryInfo value is 0 */}
+      {stats && !hasZeroSystemMemory(stats.systemMemoryInfo) && (
+        <div className="mt-8 flex md:flex-row md:justify-center md:items-stretch gap-8 text-gray-800 dark:text-dark-text flex-row gap-1">
+          <div ref={uptimeRef} className="flex flex-col items-center justify-center min-w-[220px]" />
+          <div ref={memoryBarRef} className="flex flex-col items-center justify-center min-w-[240px]" />
+          <div ref={ramGaugeRef} className="flex flex-col items-center justify-center min-w-[260px]" />
         </div>
       )}
       <div id="word-cloud" ref={wordCloudRef} className="mt-8"></div>

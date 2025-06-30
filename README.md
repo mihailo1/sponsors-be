@@ -22,3 +22,15 @@ A web application to manage and search strings, upload JSON files, and visualize
 - [Deno](https://deno.land/) (version 1.14.0 or later)
 - [Denon](https://deno.land/x/denon)
 - [Node.js](https://nodejs.org/) (22+)
+
+## Redis Setup
+
+This app now uses Redis (via Upstash) instead of Deno KV for string storage. You must set the `REDIS_URL` environment variable in your deployment environment. See `.env.example` for details.
+
+- For local development, copy `.env.example` to `.env` and set your Redis connection string.
+- For GitHub Actions, add `REDIS_URL` to your repository secrets.
+
+### Migration from Deno KV
+
+- All string storage and retrieval is now handled by Redis.
+- No Deno KV usage remains in the codebase.

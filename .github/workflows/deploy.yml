@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy to Deno Deploy
 on:
   push:
     branches: main
@@ -7,15 +7,12 @@ on:
 
 jobs:
   deploy:
-    name: Deploy
     runs-on: ubuntu-latest
-
     permissions:
-      id-token: write # Needed for auth with Deno Deploy
-      contents: read # Needed to clone the repository
-
+      id-token: write
+      contents: read
     steps:
-      - name: Clone repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install Deno
@@ -23,22 +20,20 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
+      - name: Build React app
+        run: |
+          cd react-app
+          corepack enable && corepack prepare yarn@4.6.0 --activate
+          yarn install --immutable
+          yarn tw
+          yarn build
+          cd ..
 
-      - name: Install step
-        run: "corepack enable; corepack prepare yarn@4.6.0 --activate"
-
-      - name: Build step
-        run: "cd react-app; yarn install --frozen-lockfile; yarn build"
-
-      - name: Upload to Deno Deploy
+      - name: Deploy to Deno Deploy
         uses: denoland/deployctl@v1
         with:
           project: "michael-sponsors-be-84"
           entrypoint: "server.ts"
           root: ""
-          
-          
+
+
