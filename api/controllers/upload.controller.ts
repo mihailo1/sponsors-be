@@ -1,16 +1,5 @@
 import { Context } from "../../deps.ts";
-import { connectRedis, RedisClient } from "../../deps.ts";
-
-let redis: RedisClient | null = null;
-async function getRedis() {
-  if (!redis) {
-    redis = await connectRedis({
-      hostname: Deno.env.get("REDIS_HOST") || "redis",
-      port: 6379,
-    });
-  }
-  return redis;
-}
+import { getRedis } from "../utils/redisClient.ts";
 
 export async function uploadJsonFile(context: Context) {
   try {
@@ -24,7 +13,13 @@ export async function uploadJsonFile(context: Context) {
 
     if (Array.isArray(body) && body.length > 0) {
       const redis = await getRedis();
-      await redis.sadd("strings", ...body);
+      if (redis.sadd) {
+        // deno-redis
+        await redis.sadd("strings", ...body);
+      } else if (redis.set) {
+        // Upstash Redis (simulate sadd with set for demo, or use SADD if supported)
+        await Promise.all(body.map((item: string) => redis.sadd("strings", item)));
+      }
       context.response.status = 200;
       context.response.body = {
         message: "File uploaded successfully",
@@ -35,9 +30,9 @@ export async function uploadJsonFile(context: Context) {
       context.response.body = { message: "No JSON file uploaded" };
     }
   } catch (error) {
-    console.error("Failed to parse JSON body:", error);
+    console.error("Failed to parse JSON body or Redis error:", error);
     context.response.status = 400;
-    context.response.body = "Invalid JSON";
+    context.response.body = "Invalid JSON or Redis error";
   }
 }
 

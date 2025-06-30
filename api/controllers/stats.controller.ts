@@ -1,13 +1,5 @@
 import { ServerStats, StringItem } from "../../types.ts";
-import { connectRedis, RedisClient } from "../../deps.ts";
-
-let redis: RedisClient | null = null;
-async function getRedis() {
-  if (!redis) {
-    redis = await connectRedis({ hostname: Deno.env.get("REDIS_HOST") || "redis", port: 6379 });
-  }
-  return redis;
-}
+import { getRedis } from "../utils/redisClient.ts";
 
 export async function getServerStats(): Promise<ServerStats> {
   // const _startTime = performance.now();

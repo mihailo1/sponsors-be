@@ -7,3 +7,6 @@ export {
   connect as connectRedis,
   type Redis as RedisClient
 } from "https://deno.land/x/redis@v0.32.0/mod.ts";
+
+// Upstash Redis for Deno Deploy/production
+export { Redis as UpstashRedis } from "https://esm.sh/@upstash/redis@1.25.0";
