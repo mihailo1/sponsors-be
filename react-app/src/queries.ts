@@ -19,7 +19,25 @@ export const uploadFile = (fileContent: string | ArrayBuffer | null) => {
       "Content-Type": "application/json",
     },
     body: fileContent,
-  }).then((response) => response.json());
+  }).then(async (response) => {
+    const contentType = response.headers.get("content-type");
+    if (response.ok) {
+      if (contentType && contentType.includes("application/json")) {
+        return response.json();
+      } else {
+        return response.text();
+      }
+    } else {
+      // Try to parse error as JSON, otherwise return text
+      let error;
+      if (contentType && contentType.includes("application/json")) {
+        error = await response.json();
+      } else {
+        error = await response.text();
+      }
+      throw new Error(error);
+    }
+  });
 };
 
 export const fetchStrings = (query: string) => {
