@@ -44,10 +44,11 @@ function Settings() {
     };
   }, []);
 
-  // Helper: check if any value in systemMemoryInfo is 0
+  // Helper: check if total or available in systemMemoryInfo is 0
   const hasZeroSystemMemory = (info: any) => {
     if (!info) return true;
-    return Object.values(info).some((v) => v === 0);
+    // Only check total and available fields
+    return info.total === 0 || info.available === 0;
   };
 
   // Merge all D3 visualizations into one useEffect
@@ -143,11 +144,11 @@ function Settings() {
       {stats && (
         <div className="mt-8 flex flex-col items-center gap-4">
           <div className="flex flex-row gap-8 items-end">
-            <div className="flex flex-col items-center max-w-[140px]">
+            <div className="flex flex-col items-center max-w-[160px] dark:text-dark-text">
               <span className="text-lg font-medium">Strings Count</span>
               <span id="stringsCount" className="text-3xl font-bold text-blue-600">0</span>
             </div>
-            <div className="flex flex-col items-center max-w-[140px]">
+            <div className="flex flex-col items-center max-w-[160px] dark:text-dark-text">
               <span className="text-lg font-medium">Avg. String Length</span>
               <span id="averageLength" className="text-3xl font-bold text-green-600">0</span>
             </div>
