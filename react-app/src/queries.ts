@@ -13,12 +13,14 @@ export const fetchStats = () => {
 };
 
 export const uploadFile = (fileContent: string | ArrayBuffer | null) => {
+  // Ensure fileContent is a string (e.g., base64 or text)
+  const fileString = typeof fileContent === "string" ? fileContent : '';
   return fetch(`${API_KEY}/api/upload`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: fileContent,
+    body: JSON.stringify({ file: fileString }),
   }).then(async (response) => {
     const contentType = response.headers.get("content-type");
     if (response.ok) {
