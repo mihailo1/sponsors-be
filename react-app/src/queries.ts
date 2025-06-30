@@ -30,14 +30,15 @@ export const uploadFile = (fileContent: string | ArrayBuffer | null) => {
         return response.text();
       }
     } else {
-      // Try to parse error as JSON, otherwise return text
       let error;
       if (contentType && contentType.includes("application/json")) {
         error = await response.json();
+        // Stringify error object for better error messages
+        throw new Error(typeof error === 'object' ? JSON.stringify(error) : String(error));
       } else {
         error = await response.text();
+        throw new Error(error);
       }
-      throw new Error(error);
     }
   });
 };
